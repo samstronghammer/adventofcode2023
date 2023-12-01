@@ -1,41 +1,26 @@
-# Compiled Lua sources
-luac.out
+# The directory Mix will write compiled artifacts to.
+/_build/
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+# If you run "mix test --cover", coverage assets end up here.
+/cover/
 
-# Object files
-*.o
-*.os
-*.ko
-*.obj
-*.elf
+# The directory Mix downloads your dependencies sources to.
+/deps/
 
-# Precompiled Headers
-*.gch
-*.pch
+# Where third-party dependencies like ExDoc output generated docs.
+/doc/
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
+# Ignore .fetch files in case you like to edit your project deps locally.
+/.fetch
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+# If the VM crashes, it generates a dump, let's ignore it too.
+erl_crash.dump
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+# Also ignore archive artifacts (built via "mix archive.build").
+*.ez
 
+# Ignore package tarball (built via "mix hex.build").
+adventofcode2023-*.tar
+
+# Temporary files, for example, from tests.
+/tmp/
