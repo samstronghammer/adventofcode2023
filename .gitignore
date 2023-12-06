@@ -24,3 +24,5 @@ adventofcode2023-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+lib/day*/in*.txt
