@@ -1,5 +1,4 @@
 defmodule Adventofcode2023.MixProject do
-    IO.puts("Day 01")
   use Mix.Project
 
   def project do
