@@ -1,7 +1,7 @@
 
-defmodule Day05 do
-  use AdventOfCode
-  #alias FileUtil
+defmodule AdventOfCode.Day05 do
+  use AdventOfCode.FileUtils
+  alias AdventOfCode.FileUtils
 
   defmodule SeedRange do
     defstruct [:start, :length]
@@ -131,7 +131,7 @@ defmodule Day05 do
 
   def run() do
     lines = puzzle_lines()
-    all_number_lists = lines |> Enum.map(&FileUtil.extract_numbers/1)
+    all_number_lists = lines |> FileUtils.extract_numbers
     [seed_list | rest_lists] = all_number_lists
     seed_ranges = seed_list |> Enum.chunk_every(2) 
                             |> Enum.map(&%SeedRange{start: List.first(&1), length: List.last(&1)})

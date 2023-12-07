@@ -1,10 +1,7 @@
 
-defmodule Day04 do
-  use AdventOfCode
-
-  def extract_numbers(s) do
-    Regex.scan(~r/\d+/, s, capture: :first) |> Enum.map(&List.first/1) |> Enum.map(&String.to_integer/1)
-  end
+defmodule AdventOfCode.Day04 do
+  use AdventOfCode.FileUtils
+  alias AdventOfCode.FileUtils
 
   defmodule ScratchCard do
     defstruct [:id, :winning_numbers, :your_numbers, :num_winning, :score]
@@ -19,13 +16,13 @@ defmodule Day04 do
 
     def from_string(s) do
       [id_string, winning_string, your_string] = String.split(s, ~r/[\:\|]/)
-      winning_numbers = Day04.extract_numbers(winning_string)
-      your_numbers = Day04.extract_numbers(your_string)
+      winning_numbers = FileUtils.extract_numbers_from_line(winning_string)
+      your_numbers = FileUtils.extract_numbers_from_line(your_string)
       num_winning = your_numbers |> Enum.count(fn x -> Enum.member?(winning_numbers, x) end)
       %ScratchCard{
-        id: hd(Day04.extract_numbers(id_string)),
-        winning_numbers: Day04.extract_numbers(winning_string),
-        your_numbers: Day04.extract_numbers(your_string),
+        id: hd(FileUtils.extract_numbers_from_line(id_string)),
+        winning_numbers: FileUtils.extract_numbers_from_line(winning_string),
+        your_numbers: FileUtils.extract_numbers_from_line(your_string),
         num_winning: num_winning,
         score: to_score(num_winning)
       }

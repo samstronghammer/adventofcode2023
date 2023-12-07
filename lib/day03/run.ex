@@ -1,6 +1,7 @@
 
-defmodule Day03 do
-  use AdventOfCode
+defmodule AdventOfCode.Day03 do
+  use AdventOfCode.FileUtils
+  alias AdventOfCode.Day03
 
   def point_range({min_row, min_col}, {max_row, max_col}) do
     Stream.flat_map(min_row..max_row, fn row -> min_col..max_col |> Stream.map(&{row, &1}) end) 
@@ -78,8 +79,6 @@ defmodule Day03 do
                                  |> Enum.filter(&(length(&1) === 2))
                                  |> Enum.map(&Enum.product/1)
                                  |> Enum.sum
-                                
-
   end
 end
 

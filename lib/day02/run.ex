@@ -1,6 +1,6 @@
 
-defmodule Day02 do
-  use AdventOfCode
+defmodule AdventOfCode.Day02 do
+  use AdventOfCode.FileUtils
 
   defmodule GameSet do
     defstruct red: 0, green: 0, blue: 0

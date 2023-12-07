@@ -1,10 +1,12 @@
 
-defmodule Day01 do
-  use AdventOfCode
+defmodule AdventOfCode.Day01 do
+  use AdventOfCode.FileUtils
 
   defp is_digit?(c) when c >= ?0 and c <= ?9, do: true
   defp is_digit?(_), do: false 
 
+  @number_names %{one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9}
+  
   defp line_to_int(line) do
     ints = line |> String.to_charlist |> Enum.filter(&is_digit?/1) |> Enum.map(&(&1 - 48))
     10 * List.first(ints) + List.last(ints)

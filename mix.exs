@@ -22,7 +22,7 @@ defmodule Adventofcode2023.MixProject do
  
   def run_day(args) do
     [num] = args
-    apply(String.to_atom("Elixir.Day#{String.pad_leading(num, 2, "0")}"), :run, [])
+    apply(String.to_atom("Elixir.AdventOfCode.Day#{String.pad_leading(num, 2, "0")}"), :run, [])
   end
 
 
