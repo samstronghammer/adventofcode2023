@@ -23,6 +23,7 @@ defmodule AdventOfCode.Day09 do
   def run() do
     number_patterns = puzzle_lines() |> FileUtils.extract_numbers()
     IO.inspect number_patterns |> Enum.map(&infer(&1, :last)) |> Enum.sum
+    IO.inspect number_patterns |> Enum.map(&infer(Enum.reverse(&1), :last)) |> Enum.sum
     IO.inspect number_patterns |> Enum.map(&infer(&1, :first)) |> Enum.sum
   end
 end
