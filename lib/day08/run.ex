@@ -28,7 +28,7 @@ defmodule AdventOfCode.Day08 do
     IO.inspect nodes |> Enum.map(&List.first/1) 
                      |> Enum.filter(&ends_with?(&1, "A")) 
                      |> Enum.map(&cycle_length(&1, pattern, node_map))
-                     |> Enum.reduce(1, &Math.lcm/2)
+                     |> Enum.reduce(&Math.lcm/2)
   end
 end
 

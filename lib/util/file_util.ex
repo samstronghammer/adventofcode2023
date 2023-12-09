@@ -16,7 +16,7 @@ defmodule AdventOfCode.FileUtils do
 
   @spec extract_numbers_from_line(String.t()) :: Enumerable.t(integer)
   def extract_numbers_from_line(line) do
-    extract_regex_from_line(line, ~r/\d+/) |> Enum.map(&String.to_integer/1)
+    extract_regex_from_line(line, ~r/-?\d+/) |> Enum.map(&String.to_integer/1)
   end
 
   @spec extract_regex_from_line(String.t(), Regex.t()) :: Enumerable.t(String.t())
