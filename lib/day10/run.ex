@@ -38,6 +38,25 @@ defmodule AdventOfCode.Day10 do
     end)
   end
 
+  def infer_char(curr_pos, prev_pos, next_pos) do
+    d1 = get_dir(prev_pos, curr_pos)
+    d2 = get_dir(curr_pos, next_pos)
+    case {d1, d2} do
+      {:north, :north} -> "|"
+      {:south, :south} -> "|"
+      {:east, :east} -> "-"
+      {:west, :west} -> "-"
+      {:south, :east} -> "L"
+      {:west, :north} -> "L"
+      {:south, :west} -> "J"
+      {:east, :north} -> "J"
+      {:east, :south} -> "7"
+      {:north, :west} -> "7"
+      {:north, :east} -> "F"
+      {:west, :south} -> "F"
+    end
+  end
+
   def next_pos(curr_pos, prev_pos, lines) do
     travel_dir = get_dir(curr_pos, prev_pos)
     char_string = get_char(curr_pos, lines)
@@ -96,7 +115,9 @@ defmodule AdventOfCode.Day10 do
       end
     end)
     IO.inspect (length(loop_path) - 1) / 2
+    s_char = infer_char(List.first(loop_path), Enum.at(loop_path, 2), List.last(loop_path))
     loop_chars = Map.new(loop_path, fn pos -> {pos, get_char(pos, lines)} end)
+    loop_chars = Map.put(loop_chars, List.first(loop_path), s_char)
 
     line_length = String.length(hd(lines))
     total = 0..(length(lines) - 1) |> Enum.map(fn row -> 
@@ -113,7 +134,7 @@ defmodule AdventOfCode.Day10 do
           {"7", _, "L"} -> {total, borders_crossed + 1, nil}
           {"7", _, _} -> {total, borders_crossed - 1, nil}
           {"F", _, _} -> {total, borders_crossed + 1, "F"}
-          {"S", _, _} -> {total, borders_crossed, prev_turn}# special case dependent on input
+          #{"S", _, _} -> {total, borders_crossed, prev_turn}# special case dependent on input
         end
       end)
       total
