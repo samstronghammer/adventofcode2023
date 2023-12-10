@@ -1,13 +1,23 @@
 
 defmodule AdventOfCode.Day10 do
   use AdventOfCode.FileUtils
-  
+
+  @directions [
+    {"|", :north, :north}, {"|", :south, :south}, 
+    {"-", :east, :east}, {"-", :west, :west},
+    {"L", :south, :east}, {"L", :west, :north},
+    {"J", :south, :west}, {"J", :east, :north},
+    {"7", :north, :west}, {"7", :east, :south},
+    {"F", :north, :east}, {"F", :west, :south},
+  ]
+
   def add_dir({row, col}, travel_dir) do
     case travel_dir do
       :north -> {row - 1, col}
       :south -> {row + 1, col}
       :east -> {row, col + 1} 
       :west -> {row, col - 1}
+      nil -> nil
     end
   end
 
@@ -24,13 +34,13 @@ defmodule AdventOfCode.Day10 do
     if row >= length(lines) or col >= String.length(hd(lines)) do
       "."
     else
-      Enum.at(lines, row) |> String.at(col)
+      Enum.fetch!(lines, row) |> String.at(col)
     end
   end
 
   def find_start(lines) do
     lines |> Enum.with_index |> Enum.reduce_while(nil, fn {line, row}, _acc -> 
-      col = Enum.find_index(String.to_charlist(line), &(&1 === ?S))
+      col = line |> String.graphemes |> Enum.find_index(&(&1 === "S"))
       case col do
         nil -> {:cont, nil}
         col -> {:halt, {row, col}}
@@ -41,45 +51,24 @@ defmodule AdventOfCode.Day10 do
   def infer_char(curr_pos, prev_pos, next_pos) do
     d1 = get_dir(prev_pos, curr_pos)
     d2 = get_dir(curr_pos, next_pos)
-    case {d1, d2} do
-      {:north, :north} -> "|"
-      {:south, :south} -> "|"
-      {:east, :east} -> "-"
-      {:west, :west} -> "-"
-      {:south, :east} -> "L"
-      {:west, :north} -> "L"
-      {:south, :west} -> "J"
-      {:east, :north} -> "J"
-      {:east, :south} -> "7"
-      {:north, :west} -> "7"
-      {:north, :east} -> "F"
-      {:west, :south} -> "F"
-    end
+    Enum.find_value(@directions, nil, fn {char, match_d1, match_d2} -> 
+      case {match_d1, match_d2} do
+        {^d1, ^d2} -> char
+        _ -> nil
+      end
+    end)
   end
 
   def next_pos(curr_pos, prev_pos, lines) do
     travel_dir = get_dir(curr_pos, prev_pos)
     char_string = get_char(curr_pos, lines)
-    new_direction = case {char_string, travel_dir} do
-      {"|", :north} -> :north 
-      {"|", :south} -> :south 
-      {"-", :east} -> :east 
-      {"-", :west} -> :west 
-      {"L", :south} -> :east 
-      {"L", :west} -> :north 
-      {"J", :south} -> :west 
-      {"J", :east} -> :north 
-      {"7", :east} -> :south 
-      {"7", :north} -> :west 
-      {"F", :north} -> :east
-      {"F", :west} -> :south
-      _ -> nil
-    end
-    if new_direction === nil do
-      nil
-    else
-      add_dir(curr_pos, new_direction) 
-    end
+    new_direction = Enum.find_value(@directions, nil, fn {match_char, match_d1, d2} -> 
+      case {match_char, match_d1} do
+        {^char_string, ^travel_dir} -> d2 
+        _ -> nil
+      end
+    end)
+    add_dir(curr_pos, new_direction)
   end
 
   def build_path(path, lines) do
@@ -114,8 +103,8 @@ defmodule AdventOfCode.Day10 do
         {:cont, nil}
       end
     end)
-    IO.inspect (length(loop_path) - 1) / 2
-    s_char = infer_char(List.first(loop_path), Enum.at(loop_path, 2), List.last(loop_path))
+    IO.inspect div(length(loop_path) - 1, 2)
+    s_char = infer_char(List.first(loop_path), Enum.at(loop_path, 1), Enum.at(loop_path, -2))
     loop_chars = Map.new(loop_path, fn pos -> {pos, get_char(pos, lines)} end)
     loop_chars = Map.put(loop_chars, List.first(loop_path), s_char)
 
@@ -134,7 +123,6 @@ defmodule AdventOfCode.Day10 do
           {"7", _, "L"} -> {total, borders_crossed + 1, nil}
           {"7", _, _} -> {total, borders_crossed - 1, nil}
           {"F", _, _} -> {total, borders_crossed + 1, "F"}
-          #{"S", _, _} -> {total, borders_crossed, prev_turn}# special case dependent on input
         end
       end)
       total
