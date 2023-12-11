@@ -28,5 +28,11 @@ defmodule AdventOfCode.FileUtils do
   def extract_numbers(lines) do
     lines |> Enum.map(&(extract_numbers_from_line(&1)))
   end
-  
+
+  @spec lines_to_grid(Enumerable.t(String.t())) :: %{{integer, integer} => String.t()}
+  def lines_to_grid(lines) do
+    lines |> Enum.with_index |> Enum.flat_map(fn {line, row} -> 
+      line |> String.graphemes |> Enum.with_index |> Enum.map(fn {char, col} -> {{row, col}, char} end)
+    end) |> Map.new
+  end
 end
