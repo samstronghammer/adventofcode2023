@@ -35,4 +35,11 @@ defmodule AdventOfCode.FileUtils do
       line |> String.graphemes |> Enum.with_index |> Enum.map(fn {char, col} -> {{row, col}, char} end)
     end) |> Map.new
   end
+  
+  @spec grid_maximum(%{{integer, integer} => String.t()}) :: {integer, integer}
+  def grid_maximum(grid) do
+    grid |> Enum.reduce({0, 0}, fn {{row, col}, _}, {max_row, max_col} -> 
+      {max(row, max_row), max(col, max_col)}
+    end)
+  end
 end

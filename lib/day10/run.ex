@@ -1,5 +1,6 @@
 
 defmodule AdventOfCode.Day10 do
+  alias AdventOfCode.FileUtils
   use AdventOfCode.FileUtils
 
   @directions [
@@ -30,24 +31,6 @@ defmodule AdventOfCode.Day10 do
     end
   end
   
-  def get_char({row, col}, lines) do
-    if row >= length(lines) or col >= String.length(hd(lines)) do
-      "."
-    else
-      Enum.fetch!(lines, row) |> String.at(col)
-    end
-  end
-
-  def find_start(lines) do
-    lines |> Enum.with_index |> Enum.reduce_while(nil, fn {line, row}, _acc -> 
-      col = line |> String.graphemes |> Enum.find_index(&(&1 === "S"))
-      case col do
-        nil -> {:cont, nil}
-        col -> {:halt, {row, col}}
-      end
-    end)
-  end
-
   def infer_char(curr_pos, prev_pos, next_pos) do
     d1 = get_dir(prev_pos, curr_pos)
     d2 = get_dir(curr_pos, next_pos)
@@ -59,9 +42,8 @@ defmodule AdventOfCode.Day10 do
     end)
   end
 
-  def next_pos(curr_pos, prev_pos, lines) do
+  def next_pos(curr_pos, prev_pos, char_string) do
     travel_dir = get_dir(curr_pos, prev_pos)
-    char_string = get_char(curr_pos, lines)
     new_direction = Enum.find_value(@directions, nil, fn {match_char, match_d1, d2} -> 
       case {match_char, match_d1} do
         {^char_string, ^travel_dir} -> d2 
@@ -71,14 +53,14 @@ defmodule AdventOfCode.Day10 do
     add_dir(curr_pos, new_direction)
   end
 
-  def build_path(path, lines) do
+  def build_path(path, grid) do
     curr_pos = Enum.at(path, -1)
     prev_pos = Enum.at(path, -2)
-    next_pos = next_pos(curr_pos, prev_pos, lines)
+    next_pos = next_pos(curr_pos, prev_pos, Map.get(grid, curr_pos, "."))
     if next_pos === nil do
       path
     else
-      build_path(path ++ [next_pos], lines)
+      build_path(path ++ [next_pos], grid)
     end
   end
 
@@ -87,8 +69,8 @@ defmodule AdventOfCode.Day10 do
   end
 
   def run() do
-    lines = puzzle_lines() 
-    start_pos = find_start(lines)
+    grid = puzzle_lines() |> FileUtils.lines_to_grid
+    start_pos = grid |> Enum.find_value(nil, fn {point, char} -> if char === "S", do: point end)
     start_paths = [
       [start_pos, add_dir(start_pos, :north)],
       [start_pos, add_dir(start_pos, :east)],
@@ -96,7 +78,7 @@ defmodule AdventOfCode.Day10 do
       [start_pos, add_dir(start_pos, :west)],
     ]
     loop_path = start_paths |> Enum.reduce_while(nil, fn path, _acc -> 
-      built_path = build_path(path, lines)
+      built_path = build_path(path, grid)
       if List.last(built_path) === List.first(built_path) do
         {:halt, built_path}
       else
@@ -105,12 +87,12 @@ defmodule AdventOfCode.Day10 do
     end)
     IO.inspect div(length(loop_path) - 1, 2)
     s_char = infer_char(List.first(loop_path), Enum.at(loop_path, 1), Enum.at(loop_path, -2))
-    loop_chars = Map.new(loop_path, fn pos -> {pos, get_char(pos, lines)} end)
+    loop_chars = Map.new(loop_path, fn pos -> {pos, Map.get(grid, pos)} end)
     loop_chars = Map.put(loop_chars, List.first(loop_path), s_char)
 
-    line_length = String.length(hd(lines))
-    total = 0..(length(lines) - 1) |> Enum.map(fn row -> 
-      {total, _, _} = Enum.reduce(0..(line_length - 1), {0, 0, nil}, fn col, {total, borders_crossed, prev_turn} -> 
+    {max_row, max_col} = FileUtils.grid_maximum(grid)
+    total = 0..max_row |> Enum.map(fn row -> 
+      {total, _, _} = Enum.reduce(0..max_col, {0, 0, nil}, fn col, {total, borders_crossed, prev_turn} -> 
         curr_char = Map.get(loop_chars, {row, col})
         case {curr_char, rem(borders_crossed, 4), prev_turn} do
           {nil, 2, _} -> {total + 1, borders_crossed, prev_turn}
