@@ -1,15 +1,15 @@
 defmodule AdventOfCode.FileUtils do
   defmacro __using__(_opts) do
     quote do
-      def test_lines() do
+      def test_lines(trim \\ true) do
         module_name = Module.split(__MODULE__) |> Enum.at(1)
         File.read!("lib/#{String.downcase(module_name)}/in2.txt")
-          |> String.split("\n", trim: true)
+          |> String.split("\n", trim: trim)
       end
-      def puzzle_lines() do
+      def puzzle_lines(trim \\ true) do
         module_name = Module.split(__MODULE__) |> Enum.at(1)
         File.read!("lib/#{String.downcase(module_name)}/in.txt")
-          |> String.split("\n", trim: true)
+          |> String.split("\n", trim: trim)
       end
     end
   end
