@@ -42,4 +42,15 @@ defmodule AdventOfCode.FileUtils do
       {max(row, max_row), max(col, max_col)}
     end)
   end
+
+  @spec print_grid(%{{integer, integer} => String.t()}) :: nil
+  def print_grid(grid) do
+    {max_row, max_col} = grid_maximum(grid)
+    0..max_row |> Enum.map(fn row -> 
+      line = 0..max_col |> Enum.map_join(fn col -> Map.get(grid, {row, col}) end)
+      IO.puts(line)
+    end)
+    IO.puts("")
+    nil
+  end
 end
