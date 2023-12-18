@@ -20,15 +20,14 @@ defmodule AdventOfCode.Day18 do
     end |> dir_char_to_tuple
   end
 
-  def calc_corners_and_perimeter(instructions, part) do
-    {corners, _} = instructions |> Enum.map_reduce(
+  def calc_corners(instructions, part) do
+    instructions |> Enum.map_reduce(
       {0, 0}, 
       fn instruction, {row, col} -> 
         {{delta_row, delta_col}, number} = get_instruction_data(instruction, part) 
         new_position = {row + delta_row * number, col + delta_col * number}
         {new_position, new_position}
-      end) 
-    corners
+      end) |> elem(0)
   end
   
   def get_instruction_data({dir_char, number, color}, part) do
@@ -46,9 +45,9 @@ defmodule AdventOfCode.Day18 do
       toks = String.split(line, ~r/[ \(\)]/)
       {Enum.at(toks, 0), String.to_integer(Enum.at(toks, 1)), Enum.at(toks, 3)}
     end)
-    corners1 = calc_corners_and_perimeter(instructions, :p1)
+    corners1 = calc_corners(instructions, :p1)
     IO.inspect Point2D.polygon_grid_area(corners1)
-    corners2 = calc_corners_and_perimeter(instructions, :p2)
+    corners2 = calc_corners(instructions, :p2)
     IO.inspect Point2D.polygon_grid_area(corners2)
   end
 end
