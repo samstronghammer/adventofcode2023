@@ -69,9 +69,9 @@ defmodule AdventOfCode.Day10 do
       else
         {:cont, nil}
       end
-    end)
-    IO.inspect div(length(loop_path) - 1, 2)
-    IO.inspect Point2D.polygon_grid_area(Enum.drop(loop_path, 1)) - length(loop_path) + 1
+    end) |> Enum.drop(1)
+    IO.inspect div(length(loop_path), 2)
+    IO.inspect Point2D.polygon_grid_area(loop_path) - length(loop_path)
   end
 end
 
