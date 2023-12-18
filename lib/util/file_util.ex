@@ -38,8 +38,23 @@ defmodule AdventOfCode.FileUtils do
   
   @spec grid_maximum(%{{integer, integer} => String.t()}) :: {integer, integer}
   def grid_maximum(grid) do
-    grid |> Enum.reduce({0, 0}, fn {{row, col}, _}, {max_row, max_col} -> 
+    grid_set_maximum(Map.keys(grid))
+  end
+
+  def grid_set_maximum(grid_set) do
+    grid_set |> Enum.reduce(fn {row, col}, {max_row, max_col} -> 
       {max(row, max_row), max(col, max_col)}
+    end)
+  end
+
+  @spec grid_minimum(%{{integer, integer} => String.t()}) :: {integer, integer}
+  def grid_minimum(grid) do
+    grid_set_minimum(Map.keys(grid))
+  end
+  
+  def grid_set_minimum(grid_set) do
+    grid_set |> Enum.reduce(fn {row, col}, {min_row, min_col} -> 
+      {min(row, min_row), min(col, min_col)}
     end)
   end
 

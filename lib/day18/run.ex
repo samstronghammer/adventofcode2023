@@ -20,29 +20,17 @@ defmodule AdventOfCode.Day18 do
     end |> dir_char_to_tuple
   end
 
-  def polygon_area(coord_list) do
-    pairs = Enum.zip(coord_list, Enum.drop(coord_list ++ [List.first(coord_list)], 1))
-    pairs |> Enum.map(fn {p1, p2} -> 
-      (elem(p1, 0) * elem(p2, 1)) -
-      (elem(p1, 1) * elem(p2, 0))
-    end) |> Enum.sum |> div(2) |> abs
-  end
-
   def calc_corners_and_perimeter(instructions, part) do
-    {corners, {_, perimeter}} = instructions |> Enum.map_reduce(
-      {{0, 0}, 0}, 
-      fn instruction, {{row, col}, perimeter} -> 
+    {corners, _} = instructions |> Enum.map_reduce(
+      {0, 0}, 
+      fn instruction, {row, col} -> 
         {{delta_row, delta_col}, number} = get_instruction_data(instruction, part) 
         new_position = {row + delta_row * number, col + delta_col * number}
-        {new_position, {new_position, perimeter + number}}
+        {new_position, new_position}
       end) 
-    {corners, perimeter}
+    corners
   end
   
-  def calc_area({vertices, perimeter}) do
-    polygon_area(vertices) + div(perimeter, 2) + 1 
-  end
-
   def get_instruction_data({dir_char, number, color}, part) do
     case part do
       :p1 -> {dir_char_to_tuple(dir_char), number}
@@ -58,8 +46,10 @@ defmodule AdventOfCode.Day18 do
       toks = String.split(line, ~r/[ \(\)]/)
       {Enum.at(toks, 0), String.to_integer(Enum.at(toks, 1)), Enum.at(toks, 3)}
     end)
-    IO.inspect calc_area(calc_corners_and_perimeter(instructions, :p1))
-    IO.inspect calc_area(calc_corners_and_perimeter(instructions, :p2))
+    corners1 = calc_corners_and_perimeter(instructions, :p1)
+    IO.inspect Point2D.polygon_grid_area(corners1)
+    corners2 = calc_corners_and_perimeter(instructions, :p2)
+    IO.inspect Point2D.polygon_grid_area(corners2)
   end
 end
 
