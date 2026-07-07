@@ -53,7 +53,7 @@ defmodule AdventOfCode.Day17 do
         {v2, String.to_integer(Map.get(grid, {row, col}))}
       end)
     end
-    PathUtil.a_star(start, goal, heuristic, get_neighbors)
+    PathUtil.a_star(start, fn point -> point === goal end, heuristic, get_neighbors)
   end
 
   def run() do

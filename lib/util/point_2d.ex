@@ -22,4 +22,8 @@ defmodule Point2D do
     perimeter = polygon_perimeter(coord_list)
     area + div(perimeter, 2) + 1 
   end
+
+  def adj4({row, col}) do
+    [{row + 1, col}, {row - 1, col}, {row, col + 1}, {row, col - 1}]  
+  end
 end
