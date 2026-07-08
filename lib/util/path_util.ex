@@ -20,25 +20,30 @@ defmodule AdventOfCode.PathUtil do
 
   defp a_star_rec(is_goal, heuristic, get_neighbors,
                   frontier, came_from, g_score, seen) do
-    {{current, _}, frontier} = Heap.split(frontier)
-    cond do
-      is_goal.(current) -> a_star_reconstruct_path(came_from, current, [])
-      MapSet.member?(seen, current) -> a_star_rec(is_goal, heuristic, get_neighbors, frontier, came_from, g_score, seen)
-      true ->
-        neighbors = get_neighbors.(current)
-        {frontier, came_from, g_score} = neighbors |>
-          Enum.reduce({frontier, came_from, g_score}, fn {neighbor_v, neighbor_d}, {frontier, came_from, g_score} ->
-            tentative_g_score = Map.fetch!(g_score, current) + neighbor_d
-            if not Map.has_key?(g_score, neighbor_v) or Map.fetch!(g_score, neighbor_v) > tentative_g_score do
-              came_from = Map.put(came_from, neighbor_v, current)
-              g_score = Map.put(g_score, neighbor_v, tentative_g_score)
-              frontier = Heap.push(frontier, {neighbor_v, tentative_g_score + neighbor_d})
-              {frontier, came_from, g_score}
-            else
-              {frontier, came_from, g_score}
-            end
-          end)
-        a_star_rec(is_goal, heuristic, get_neighbors, frontier, came_from, g_score, MapSet.put(seen, current))
+
+    if Heap.empty?(frontier) do
+      []
+    else
+      {{current, _}, frontier} = Heap.split(frontier)
+      cond do
+        is_goal.(current) -> a_star_reconstruct_path(came_from, current, [])
+        MapSet.member?(seen, current) -> a_star_rec(is_goal, heuristic, get_neighbors, frontier, came_from, g_score, seen)
+        true ->
+          neighbors = get_neighbors.(current)
+          {frontier, came_from, g_score} = neighbors |>
+            Enum.reduce({frontier, came_from, g_score}, fn {neighbor_v, neighbor_d}, {frontier, came_from, g_score} ->
+              tentative_g_score = Map.fetch!(g_score, current) + neighbor_d
+              if not Map.has_key?(g_score, neighbor_v) or Map.fetch!(g_score, neighbor_v) > tentative_g_score do
+                came_from = Map.put(came_from, neighbor_v, current)
+                g_score = Map.put(g_score, neighbor_v, tentative_g_score)
+                frontier = Heap.push(frontier, {neighbor_v, tentative_g_score + neighbor_d})
+                {frontier, came_from, g_score}
+              else
+                {frontier, came_from, g_score}
+              end
+            end)
+          a_star_rec(is_goal, heuristic, get_neighbors, frontier, came_from, g_score, MapSet.put(seen, current))
       end
     end
+  end
 end
