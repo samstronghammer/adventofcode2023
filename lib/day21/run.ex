@@ -5,10 +5,6 @@ defmodule AdventOfCode.Day21 do
 
   @big_step_number 26501365
 
-  def adj4({row, col}) do
-    [{row + 1, col}, {row - 1, col}, {row, col + 1}, {row, col - 1}]  
-  end
-  
   def num_plots_rec(rocks, next_step, num_steps, frontier, even_plots, odd_plots) do
     if next_step > num_steps do
       if rem(num_steps, 2) === 0 do
@@ -18,7 +14,7 @@ defmodule AdventOfCode.Day21 do
       end
     else
       next_frontier = frontier 
-        |> Enum.flat_map(&adj4/1) 
+        |> Enum.flat_map(&Point2D.adj4/1) 
         |> Enum.filter(fn loc -> 
             !MapSet.member?(frontier, loc) and 
             !MapSet.member?(even_plots, loc) and 
